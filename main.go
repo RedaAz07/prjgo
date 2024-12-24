@@ -42,7 +42,7 @@ func ProcessAll() {
 	table := addToTable()
 	table = Capitalized(table)
 	table = Upper(table)
-	table = LowerWNbr(table)
+	table = withNumber(table)
 
 	table = Lower(table)
 	table = BinaryToDecimal(table)
@@ -109,21 +109,45 @@ func Lower(table []string) []string {
 	return table
 }
 
-func LowerWNbr(table []string) []string {
+func withNumber(table []string) []string {
+	count := 0
 	for i := 0; i < len(table); i++ {
+		count++
 		if table[i][0] == '(' {
 			//	table[i-1] = strings.ToLower(table[i-1])
 			fmt.Println(table[i] + "<=")
-			fmt.Println(string(table[i+1][0]) + "<=")
+			fmt.Println(count)
+
+			// fmt.Println(string(table[i+1][0]) + "<=")
+
+			// check if the next char is up or cao or low
+			/*if table[i][1:] != "up," ||   table[i][1:] != "low,"  ||  table[i][1:] != "cap," {
+				continue
+			}*/
 
 			num1, err := strconv.Atoi(string(table[i+1][0]))
 			if err != nil {
 				fmt.Println("Error converting string to int:", err)
 			}
 
+			//	handel the range
+			if count-1 < num1 {
+				num1 = count - 1
+			}
+
 			if string(table[i]) == "(low," {
-				for j := 0; j < num1; j++ {
+				for j := 1; j <= num1; j++ {
 					table[i-j] = strings.ToLower(table[i-j])
+				}
+			} else if string(table[i]) == "(up," {
+				for j := 1; j <= num1; j++ {
+					table[i-j] = strings.ToUpper(table[i-j])
+				}
+			} else if string(table[i]) == "(cap," {
+				for j := 1; j <= num1; j++ {
+					word := table[i-j]
+					// Capitalize the first letter
+					table[i-j] = strings.ToUpper(string(word[0])) + word[1:]
 				}
 			}
 
