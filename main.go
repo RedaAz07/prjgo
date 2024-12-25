@@ -16,29 +16,20 @@ func AddToFile(data []byte, name string) {
 	fmt.Println("success")
 }
 
-
-
-func MyAtoi(word string   ) int {
-correct := ""
-if  word[len(word)-1] >=')'  &&  word[len(word)-2] >='1' &&  word[len(word)-2] <='9' {
-	
-	for i := 0; i < len(word)-1 ; i++ {
-		correct += string(word[i])
-	 
+func MyAtoi(word string) int {
+	correct := ""
+	if word[len(word)-1] >= ')' && word[len(word)-2] >= '1' && word[len(word)-2] <= '9' {
+		for i := 0; i < len(word)-1; i++ {
+			correct += string(word[i])
+		}
 	}
+	num1, err := strconv.Atoi(correct)
+	if err != nil {
+		fmt.Println("Error converting string to int:", err)
+	}
+
+	return num1
 }
-num1, err := strconv.Atoi(correct)
-if err != nil {
-	fmt.Println("Error converting string to int:", err)
-}
-
-return num1
-
-}
-
-
-
-
 
 /*
 func cap(word string) string {
@@ -56,13 +47,13 @@ for i := 0; i < len(word); i++ {
 func TableToString(table []string) string {
 	text := ""
 	for i := 0; i < len(table); i++ {
-		 if table[i] != " " {
-			
-			 text += string(table[i])
-			 if i < len(table)-1 { // Fix the condition to avoid adding extra space at the end
-				 text += " "
-			 }
-		 }
+		if table[i] != "" {
+
+			text += string(table[i])
+			if i < len(table)-1 {
+				text += " "
+			}
+		}
 	}
 	return text
 }
@@ -85,8 +76,10 @@ func ProcessAll() {
 	table = BinaryToDecimal(table)      // تحويل (bin)
 	table = HexadecimalToDecimal(table) // تحويل (hex)
 	table = withNumber(table)           // معالجة التعديلات بالأرقام
-	text := TableToString(table)        // تحويل الجدول إلى نص
-	data := []byte(text)                // كتابة النص إلى الملف
+	table = punctuations(table)
+	text := TableToString(table)
+	// تحويل الجدول إلى نص
+	data := []byte(text) // كتابة النص إلى الملف
 	AddToFile(data, "text.txt")
 }
 
@@ -155,7 +148,7 @@ func Lower(table []string) []string {
 	for i := 0; i < len(table); i++ {
 		if table[i] == "(low)" {
 			table[i-1] = strings.ToLower(table[i-1])
-			//	table[i+1]= ""
+			// 	table[i+1]= ""
 		}
 	}
 
@@ -175,83 +168,121 @@ func DeleteCases(cas string, table []string) []string {
 }
 
 func withNumber(table []string) []string {
+	fmt.Println(table)
+	/*
+		! makhdamach 3ndi prob fhad ex: hh hh hh hh hh hh (low, 6) (up, 4) ervreverv (7it kay7sb tal empty )
+		! + khsni n9ad lout of range fakhir string
+		! + lout of range fach kat7et gha (up, 2
+		!  ====> clean the code and make it easy
+	*/
+	//	var result []string
+
 	count := 0
-	for i := 0; i < len(table) -1; i++ {
+	for i := 0; i < len(table)-1; i++ {
+
 		count++
-		
-			//	table[i-1] = strings.ToLower(table[i-1])
-			fmt.Println(table[i] + "<=")
-			fmt.Println(count)
 
-			// fmt.Println(string(table[i+1][0]) + "<=")
-
-			// check if the next char is up or cao or low
-			/*if table[i][1:] != "up," ||   table[i][1:] != "low,"  ||  table[i][1:] != "cap," {
-				continue
-			}*/
-
-		
-
-			//	handel the range
-		
-			num1:=0
-
-			if string(table[i]) == "(low," {
-
-				num1 =  MyAtoi(table[i+1])
-				if count-1 < num1 {
-					num1 = count - 1
-				}
-				for j := 1; j <= num1; j++ {
-					table[i-j] = strings.ToLower(table[i-j])
-				}
-				
-			
-			} else if string(table[i]) == "(up,"  {
-num1:=0
-				num1 =  MyAtoi(string(table[i+1]))
-				fmt.Println(string(table[i+1]) + "<<<<<<<<<<<<<<<<<<<<<<<<<<")
-				fmt.Println(num1)
-
-				if count-1 < num1 {
-					num1 = count - 1
-				}
-
-
-				for j := 1; j <= num1; j++ {
-				 
-						
-						table[i-j] = strings.ToUpper(table[i-j])
-						table[i]= ""
-
-						if i < len(table) {
-							table[i] = ""
-						}
-						if i+1 < len(table) {
-							table[i+1] = ""
-						}
-
-							
-			
-
-fmt.Println(table)
-				}
-			//	result := DeleteCases("(up,", table)
-
-			} else if string(table[i]) == "(cap," {
-				for j := 1; j <= num1; j++ {
-					word := table[i-j]
-					// Capitalize the first letter
-
-					table[i-j] = strings.ToUpper(string(word[0])) + word[1:]
-				}
-			//result := DeleteCases("(cap,", table)
+		num1 := 0
+		if string(table[i]) == "(low," {
+			num1 = MyAtoi(table[i+1])
+			if count-1 < num1 {
+				num1 = count - 1
 			}
 
-		
+			for j := 1; j <= num1; j++ {
+				table[i-j] = strings.ToLower(table[i-j])
+
+				table[i] = ""
+
+				if i < len(table) {
+					table[i] = ""
+				}
+				if i+1 < len(table) {
+					table[i+1] = ""
+				}
+				fmt.Println(table)
+				fmt.Println(len(table))
+
+			}
+
+		}
+		if string(table[i]) == "(up," {
+			num1 := 0
+			num1 = MyAtoi(string(table[i+1]))
+
+			if count-1 < num1 {
+				num1 = count - 1
+			}
+
+			for j := 1; j <= num1; j++ {
+
+				table[i-j] = strings.ToUpper(table[i-j])
+				table[i] = ""
+
+				if i < len(table) {
+					table[i] = ""
+				}
+				if i+1 < len(table) {
+					table[i+1] = ""
+				}
+
+				fmt.Println(table)
+				fmt.Println(len(table))
+			}
+
+		}
+		if string(table[i]) == "(cap," {
+
+			num1 = MyAtoi(string(table[i+1]))
+
+			if count-1 < num1 {
+				num1 = count - 1
+			}
+
+			for j := 1; j <= num1; j++ {
+				word := table[i-j]
+				fmt.Println(table)
+				table[i-j] = strings.ToUpper(string(word[0])) + word[1:]
+				table[i] = ""
+				if i < len(table) {
+					table[i] = ""
+				}
+				if i+1 < len(table) {
+					table[i+1] = ""
+				}
+			}
+		}
+
 	}
+
 	return table
 }
+func punctuations(table []string) []string {
+	
+
+for i := 0; i < len(table); i++ {
+	if  i >0  {
+		
+		if table[i] == "," {
+			table[i-1] = table[i-1]+table[i]
+			table[i]= ""
+		}else if strings.HasPrefix(table[i],",")  {
+
+			
+
+table[i-1] =  table[i-1]  + string(table[i][0])
+table[i] = table[i][1:]
+
+		}
+	}
+	
+}
+
+
+return table 
+
+}
+
 
 func addToTable() []string {
 	name := os.Args[1]
