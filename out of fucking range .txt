@@ -1,0 +1,13 @@
+for i := 0; i < len(table)-1; i++ {
+	
+			else if string(table[i][len(table[i])-1]) == "'" && string(table[i+1][len(table[i+1])-1]) == "'" {
+			   if len(table[i])-1 == 1 {
+				   table[i] = ""
+			   } else {
+				   table[i] = table[i][:len(table[i])-1]
+			   }
+			   table[i+1] = "'" + table[i+1]
+		
+		   }
+		
+	}

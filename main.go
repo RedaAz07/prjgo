@@ -77,10 +77,12 @@ func ProcessAll() {
 	table = HexadecimalToDecimal(table) // تحويل (hex)
 	table = withNumber(table)           // معالجة التعديلات بالأرقام
 	table = punctuations(table)
+	table = Avowel(table)
+	table = marks(table)
 	text := TableToString(table)
 	// تحويل الجدول إلى نص
 	data := []byte(text) // كتابة النص إلى الملف
-	AddToFile(data, "text.txt")
+	AddToFile(data, os.Args[2])
 }
 
 func HexadecimalToDecimal(table []string) []string {
@@ -257,33 +259,108 @@ func withNumber(table []string) []string {
 
 	return table
 }
-func punctuations(table []string) []string {
-	
 
-for i := 0; i < len(table); i++ {
-	if  i >0  {
-		
-		if table[i] == "," {
-			table[i-1] = table[i-1]+table[i]
-			table[i]= ""
-		}else if strings.HasPrefix(table[i],",")  {
+func findPunctuationIndex(word string) int {
+	punctuations := []string{",", ".", "!", "?", ":", ";"}
 
-			
-
-table[i-1] =  table[i-1]  + string(table[i][0])
-table[i] = table[i][1:]
-
+	for _, punctuation := range punctuations {
+		if strings.Contains(word, punctuation) {
+			return strings.Index(word, punctuation)
 		}
 	}
-	
+	return -1
 }
 
+func punctuations(table []string) []string {
+	var result []string
+	corrWord := ""
 
-return table 
+	for i := 0; i < len(table); i++ {
+		if string(table[i]) == "," {
+			continue
+		}
+		if i >= 0 {
+			if strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
+				index := findPunctuationIndex(table[i])
+				fmt.Println(corrWord)
+				for k := 0; k < len(table[i]); k++ {
+					corrWord += string(table[i][k])
+					if k == index {
+						corrWord += " "
+					}
+				}
+				table[i] = corrWord
+			} else if table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";" {
 
+				table[i-1] = table[i-1] + table[i]
+				table[i] = ""
+			} else if strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") {
+				count := 0
+				for j := 0; j < len(table[i]); j++ {
+					if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+						count++
+					}
+				}
+				// fmt.Println(count)
+				if count == 1 {
+					table[i-1] = table[i-1] + string(table[i][0])
+					table[i] = table[i][1:]
+
+				} else {
+					table[i-1] = table[i-1] + string(table[i][0:count])
+					table[i] = table[i][count:]
+				}
+
+			}
+		}
+	}
+	for i := 0; i < len(table); i++ {
+		if table[i] != "" {
+			result = append(result, table[i])
+		}
+	}
+
+	return result
 }
 
+func Avowel(table []string) []string {
+	for i := 0; i < len(table); i++ {
+		if i < len(table)-1 {
+			if (table[i] == "a" || table[i] == "A") && (strings.HasPrefix(table[i+1], "a") || strings.HasPrefix(table[i+1], "e") || strings.HasPrefix(table[i+1], "i") || strings.HasPrefix(table[i+1], "o") || strings.HasPrefix(table[i+1], "u") || strings.HasPrefix(table[i+1], "h") || strings.HasPrefix(table[i+1], "A") || strings.HasPrefix(table[i+1], "E") || strings.HasPrefix(table[i+1], "I") || strings.HasPrefix(table[i+1], "O") || strings.HasPrefix(table[i+1], "U") || strings.HasPrefix(table[i+1], "H")) {
+				table[i] += "n"
+			}
+		}
+	}
+	return table
+}
 
+func marks(table []string) []string {
+    for i := 0; i < len(table); i++ {
+        if i+2 < len(table) {
+            if table[i] == "'" && table[i+2] == "'" {
+                table[i] = ""
+                table[i+2] = ""
+                fmt.Println(table[i+1])
+                table[i+1] = "'" + table[i+1] + "'"
+            } else if table[i][len(table[i])-1] == '\'' && table[i+2][0] == '\'' {
+                table[i] = table[i][:len(table[i])-1]
+                table[i+2] = table[i+2][1:]
+                table[i+1] = "'" + table[i+1] + "'"
+            } else if len(table[i]) > 0 && table[i][len(table[i])-1] == '\'' && i+1 < len(table) && table[i+1][0] == '\'' {
+                if len(table[i]) == 1 {
+                    table[i] = ""
+                } else {
+                    table[i] = table[i][:len(table[i])-1]
+                }
+                table[i+1] = "'" + table[i+1][1:]
+            }
+        }
+    }
+
+    result := DeleteCases("", table)
+    fmt.Println(result)
+    return result
+}
 func addToTable() []string {
 	name := os.Args[1]
 	txt := ReadFile(name)
@@ -308,7 +385,18 @@ func addToTable() []string {
 }
 
 func main() {
-	ProcessAll()
 
-	fmt.Println(MyAtoi("55)"))
+if len(os.Args)!= 3   {
+	fmt.Println("bro you should to write just the sample, result file names   ")
+}else {
+
+
+
+
+	if !strings.HasSuffix(os.Args[2], ".txt") {
+		fmt.Println(" Nice try ('_') ")
+	} else {
+		ProcessAll()
+	}
+}
 }
