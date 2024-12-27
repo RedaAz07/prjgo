@@ -78,7 +78,9 @@ func ProcessAll() {
 	table = withNumber(table)           // معالجة التعديلات بالأرقام
 	table = punctuations(table)
 	table = Avowel(table)
-	table = marks(table)
+	//table = marks(table)
+fmt.Println(MarksWords(table))  
+
 	text := TableToString(table)
 	// تحويل الجدول إلى نص
 	data := []byte(text) // كتابة النص إلى الملف
@@ -335,6 +337,7 @@ func Avowel(table []string) []string {
 }
 
 func marks(table []string) []string {
+	// ? you should to fix the error if you have just one marks  like=> hello 'reda 
 	for i := 0; i < len(table); i++ {
 		if i+1 < len(table) && strings.HasPrefix(table[i], "'") && strings.HasPrefix(table[i+1], "'") {
 			if len(table[i]) == 1 {
@@ -380,6 +383,47 @@ func marks(table []string) []string {
 	fmt.Println(result)
 	return result
 }
+
+func MarksWords(table []string) []string {
+    i := 0
+    for i < len(table) {
+        if strings.HasSuffix(table[i], "'") {
+            startIndex := i
+            for j := startIndex + 1; j < len(table); j++ {
+                if strings.HasPrefix(table[j], "'") {
+                    endIndex := j
+                    // Process the words between startIndex and endIndex
+                    for k := startIndex; k <= endIndex; k++ {
+                        if k == startIndex {
+                            if len(table[k]) == 1 {
+                                table[k] = ""
+                            } else {
+                                table[k] = table[k][:len(table[k])-1]
+                            }
+                            table[k+1] = "'" + table[k+1]
+                        } else if k == endIndex {
+                            if len(table[k]) == 1 {
+                                table[k] = ""
+                            } else {
+                                table[k] = table[k][1:]
+                            }
+                            table[k-1] = table[k-1] + "'"
+                        }
+                    }
+                    i = endIndex // Move to the next position after the endIndex
+                    break
+                }
+            }
+        }
+        i++
+    }
+
+    result := DeleteCases("", table)
+    fmt.Println(result)
+    return result
+}
+
+
 func addToTable() []string {
 	name := os.Args[1]
 	txt := ReadFile(name)
