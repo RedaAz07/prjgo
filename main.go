@@ -335,31 +335,50 @@ func Avowel(table []string) []string {
 }
 
 func marks(table []string) []string {
-    for i := 0; i < len(table); i++ {
-        if i+2 < len(table) {
-            if table[i] == "'" && table[i+2] == "'" {
-                table[i] = ""
-                table[i+2] = ""
-                fmt.Println(table[i+1])
-                table[i+1] = "'" + table[i+1] + "'"
-            } else if table[i][len(table[i])-1] == '\'' && table[i+2][0] == '\'' {
-                table[i] = table[i][:len(table[i])-1]
-                table[i+2] = table[i+2][1:]
-                table[i+1] = "'" + table[i+1] + "'"
-            } else if len(table[i]) > 0 && table[i][len(table[i])-1] == '\'' && i+1 < len(table) && table[i+1][0] == '\'' {
-                if len(table[i]) == 1 {
-                    table[i] = ""
-                } else {
-                    table[i] = table[i][:len(table[i])-1]
-                }
-                table[i+1] = "'" + table[i+1][1:]
-            }
-        }
-    }
+	for i := 0; i < len(table); i++ {
+		if i+1 < len(table) && strings.HasPrefix(table[i], "'") && strings.HasPrefix(table[i+1], "'") {
+			if len(table[i]) == 1 {
+				table[i] = ""
+			} else {
+				table[i] = table[i] + "'"
+			}
+			table[i+1] = table[i+1][1:]
+		} else if i+1 < len(table) && strings.HasSuffix(table[i], "'") && strings.HasSuffix(table[i+1], "'") {
 
-    result := DeleteCases("", table)
-    fmt.Println(result)
-    return result
+			if len(table[i]) == 1 {
+				table[i] = ""
+			} else {
+				table[i] = table[i][:len(table[i])-1]
+			}
+			table[i+1] = "'" + table[i+1]
+
+		} else if i+2 < len(table) {
+			if table[i] == "'" && table[i+2] == "'" {
+				table[i] = ""
+				table[i+2] = ""
+				table[i+1] = "'" + strings.TrimSpace(table[i+1]) + "'"
+			} else if strings.HasSuffix(table[i], "'") && strings.HasPrefix(table[i+2], "'") {
+				table[i] = strings.TrimSuffix(table[i], "'")
+				table[i+2] = strings.TrimPrefix(table[i+2], "'")
+				table[i+1] = "'" + strings.TrimSpace(table[i+1]) + "'"
+			} else if strings.HasSuffix(table[i], "'") && strings.HasPrefix(table[i+1], "'") {
+				if len(table[i]) == 1 {
+					table[i] = ""
+				} else {
+					table[i] = strings.TrimSuffix(table[i], "'")
+				}
+				table[i+1] = "'" + strings.TrimSpace(table[i+1][1:])
+			}
+		} else if strings.HasPrefix(table[i], "'") {
+			table[i] = "'" + strings.TrimSpace(table[i][1:])
+		} else if strings.HasSuffix(table[i], "'") {
+			table[i] = "'" + strings.TrimSpace(table[i][:len(table[i])-1]) + "'"
+		}
+	}
+
+	result := DeleteCases("", table)
+	fmt.Println(result)
+	return result
 }
 func addToTable() []string {
 	name := os.Args[1]
@@ -386,17 +405,14 @@ func addToTable() []string {
 
 func main() {
 
-if len(os.Args)!= 3   {
-	fmt.Println("bro you should to write just the sample, result file names   ")
-}else {
-
-
-
-
-	if !strings.HasSuffix(os.Args[2], ".txt") {
-		fmt.Println(" Nice try ('_') ")
+	if len(os.Args) != 3 {
+		fmt.Println("bro you should to write just the sample, result file names   ")
 	} else {
-		ProcessAll()
+
+		if !strings.HasSuffix(os.Args[2], ".txt") {
+			fmt.Println(" Nice try ('_') ")
+		} else {
+			ProcessAll()
+		}
 	}
-}
 }
