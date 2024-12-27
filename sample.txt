@@ -13,3 +13,7 @@ IntelliCode API Usage Examples
 Material Icon Theme
 Peacock
 Tabnine ////
+
+
+
+https://copilot.cloud.microsoft/?fromCode=cmcv2&redirectId=A944EA172A7A4F6F94300B36DADCC546&auth=2
