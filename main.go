@@ -317,7 +317,14 @@ func punctuations(table []string) []string {
 		if string(table[i]) == "," {
 			continue
 		}
+word:=""
+	for j := 0; j < len(table[i]); j++ {
+		if  table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+		word += string(table[i][j])
+		}
+	}
 		if i >= 0 {
+
 			if strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
 				index := findPunctuationIndex(table[i])
 				fmt.Println(corrWord)
