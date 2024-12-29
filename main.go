@@ -14,7 +14,7 @@ func AddToFile(data []byte, name string) {
 	if err != nil {
 		fmt.Println(" Error ")
 	}
-	fmt.Println("success")
+	fmt.Println("file  has been created successfully")
 }
 
 // function to handle the ) in the exampels of (up, 2)
@@ -82,6 +82,7 @@ func ProcessAll() {
 	table = Lower(table)
 	table = Upper(table)
 	table = withNumber(table)
+	table = punctuations(table)
 
 	text := TableToString(table)
 	data := []byte(text)
@@ -300,46 +301,51 @@ func withNumber(table []string) []string {
 
 func findPunctuationIndex(word string) int {
 	punctuations := []string{",", ".", "!", "?", ":", ";"}
-
+index:=0
 	for _, punctuation := range punctuations {
 		if strings.Contains(word, punctuation) {
-			return strings.Index(word, punctuation)
+			index = strings.Index(word, punctuation)
+			break
 		}
 	}
-	return -1
+	return index
 }
 
 func punctuations(table []string) []string {
+	//  !  .jkkle,fwef  this example is  not working
 	var result []string
 	corrWord := ""
-
 	for i := 0; i < len(table); i++ {
 		if string(table[i]) == "," {
 			continue
 		}
-word:=""
-	for j := 0; j < len(table[i]); j++ {
-		if  table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
-		word += string(table[i][j])
-		}
-	}
-		if i >= 0 {
 
-			if strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
+/* word:=""
+	for j := 0; j < len(table[i]); j++ {
+		word += string(table[i][j])
+		if j >0 && j <len(table[i])-1 &&  table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+		word += string(table[i][j])
+		word += " "
+		}
+	} */
+		
+
+			/* if   i >0 && i <len(table)-1 &&  strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
 				index := findPunctuationIndex(table[i])
-				fmt.Println(corrWord)
+
+				fmt.Println(index)
 				for k := 0; k < len(table[i]); k++ {
 					corrWord += string(table[i][k])
 					if k == index {
 						corrWord += " "
 					}
 				}
-				table[i] = corrWord
-			} else if table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";" {
+				table[i]  = strings.TrimSpace(corrWord) 
+			} else */ if i > 0 && (table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";") {
 
 				table[i-1] = table[i-1] + table[i]
 				table[i] = ""
-			} else if strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") {
+			} else if i > 0 && ( strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") ){
 				count := 0
 				for j := 0; j < len(table[i]); j++ {
 					if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
@@ -356,8 +362,22 @@ word:=""
 					table[i] = table[i][count:]
 				}
 
+			}else if   ( strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") )  {
+
+				index := findPunctuationIndex(table[i])
+
+				fmt.Println(index)
+				for k := 0; k < len(table[i]); k++ {
+					corrWord += string(table[i][k])
+					if k == index {
+						corrWord += " "
+					}
+				}
+				table[i]  = strings.TrimSpace(corrWord) 
+
 			}
-		}
+			
+		
 	}
 	for i := 0; i < len(table); i++ {
 		if table[i] != "" {
