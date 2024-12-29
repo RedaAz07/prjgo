@@ -1,0 +1,76 @@
+func punctuations(table []string) []string {
+	//  !  .jkkle,fwef  this example is  not working
+	var result []string
+	corrWord := ""
+	for i := 0; i < len(table); i++ {
+		if string(table[i]) == "," {
+			continue
+		}
+
+/* word:=""
+	for j := 0; j < len(table[i]); j++ {
+		word += string(table[i][j])
+		if j >0 && j <len(table[i])-1 &&  table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+		word += string(table[i][j])
+		word += " "
+		}
+	} */
+		
+
+			/* if   i >0 && i <len(table)-1 &&  strings.Contains(table[i], ",") || strings.Contains(table[i], ".") || strings.Contains(table[i], "!") || strings.Contains(table[i], "?") || strings.Contains(table[i], ":") || strings.Contains(table[i], ";") {
+				index := findPunctuationIndex(table[i])
+
+				fmt.Println(index)
+				for k := 0; k < len(table[i]); k++ {
+					corrWord += string(table[i][k])
+					if k == index {
+						corrWord += " "
+					}
+				}
+				table[i]  = strings.TrimSpace(corrWord) 
+			} else */ if i > 0 && (table[i] == "," || table[i] == "." || table[i] == "!" || table[i] == "?" || table[i] == ":" || table[i] == ";") {
+
+				table[i-1] = table[i-1] + table[i]
+				table[i] = ""
+			} else if i > 0 && ( strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") ){
+				count := 0
+				for j := 0; j < len(table[i]); j++ {
+					if table[i][j] == ',' || table[i][j] == '.' || table[i][j] == '!' || table[i][j] == '?' || table[i][j] == ':' || table[i][j] == ';' {
+						count++
+					}
+				}
+				// fmt.Println(count)
+				if count == 1 {
+					table[i-1] = table[i-1] + string(table[i][0])
+					table[i] = table[i][1:]
+
+				} else {
+					table[i-1] = table[i-1] + string(table[i][0:count])
+					table[i] = table[i][count:]
+				}
+
+			}else if   ( strings.HasPrefix(table[i], ",") || strings.HasPrefix(table[i], ".") || strings.HasPrefix(table[i], "!") || strings.HasPrefix(table[i], "?") || strings.HasPrefix(table[i], ":") || strings.HasPrefix(table[i], ";") )  {
+
+				index := findPunctuationIndex(table[i])
+
+				fmt.Println(index)
+				for k := 0; k < len(table[i]); k++ {
+					corrWord += string(table[i][k])
+					if k == index {
+						corrWord += " "
+					}
+				}
+				table[i]  = strings.TrimSpace(corrWord) 
+
+			}
+			
+		
+	}
+	for i := 0; i < len(table); i++ {
+		if table[i] != "" {
+			result = append(result, table[i])
+		}
+	}
+
+	return result
+}

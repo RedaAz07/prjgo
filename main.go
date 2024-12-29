@@ -312,7 +312,7 @@ index:=0
 }
 
 func punctuations(table []string) []string {
-	//  !  .jkkle,fwef  this example is  not working
+	//  !  ,jkkle,fwef  this example is  not work
 	var result []string
 	corrWord := ""
 	for i := 0; i < len(table); i++ {
